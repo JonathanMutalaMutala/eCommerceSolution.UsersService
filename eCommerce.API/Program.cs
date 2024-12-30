@@ -10,10 +10,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructure();
 builder.Services.AddCore();
 
+// Add Api Explorer services 
+builder.Services.AddEndpointsApiExplorer(); 
 
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-builder.Services.AddFluentValidationAutoValidation(); 
+builder.Services.AddFluentValidationAutoValidation();
+
+
+//Add Swagger 
+builder.Services.AddSwaggerGen();
+
+// Add Cors services 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -23,6 +40,10 @@ app.UseExceptionHandlingMiddleware();
 
 // Routing 
 app.UseRouting();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseCors();
+
 
 //Auth 
 app.UseAuthentication();
